@@ -9,13 +9,15 @@ def update_parameter_name(old_name):
     # p_r_23811_k_RPKM2protein_reaction_23811
     # -> reaction_23811_r23811_k_RPKM2protein
     # if no match, return as is
-    new_name = re.sub(r'p_r_(\d+)_(.*)_(reaction_\d+)', r'\3_r\1_\2', old_name)
+    # new_name = re.sub(r'p_r_(\d+)_(.*)_(reaction_\d+)',
+    # r'\3_r\1_\2', old_name)
+    new_name = re.sub(r'p_r_(\d+_.*)_(reaction_\d+)', r'r\1', old_name)
     return new_name
 
 
 def update_condition_table(condition_file_template, condition_file):
     template_df = pd.read_csv(condition_file_template, sep='\t')
-    #template_df.ID = template_df.ID.apply(update_parameter_name)
+    template_df.ID = template_df.ID.apply(update_parameter_name)
     template_df.set_index(['ID'], inplace=True)
     template_df = template_df.transpose()
     template_df.index.name = 'conditionId'
