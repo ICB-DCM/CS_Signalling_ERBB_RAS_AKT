@@ -54,9 +54,11 @@ def create_parameter_table(sbml_file, condition_file, measurement_file,
                                      upper_bound=5)
 
     df['hierarchicalOptimization'] = 0
-
     df.parameterScale = 'log10'
     df.estimate = 1
+
+    df.loc[df.index.str.startswith('scaling_'), 'hierarchicalOptimization'] = 1
+    df.loc[df.index.str.startswith('sigma_'), 'hierarchicalOptimization'] = 1
 
     df.to_csv(parameter_file, sep="\t", index=True)
 
