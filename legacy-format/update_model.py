@@ -2,6 +2,7 @@
 import libsbml
 import os
 import amici
+import petab
 
 
 def set_species_unit_to_nanomole(sbml_model):
@@ -87,54 +88,6 @@ def add_observables(sbml_model):
     add_sigma(sbml_model, f'proliferation')
 
 
-def check_sbml_consistency(sbml_document, check_units=False):
-    """Check for SBML validity / consistency"""
-
-    if not check_units:
-        sbml_document.setConsistencyChecks(
-            libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, False)
-
-    has_problems = sbml_document.checkConsistency()
-    if has_problems:
-        print_sbml_errors(sbml_document)
-        print('WARNING: Generated invalid SBML model. Check messages above.')
-
-    return has_problems
-
-
-def print_sbml_errors(sbml_document,
-                      minimum_severity=libsbml.LIBSBML_SEV_WARNING):
-    """Print libsbml errors"""
-
-    for error_idx in range(sbml_document.getNumErrors()):
-        error = sbml_document.getError(error_idx)
-        if error.getSeverity() >= minimum_severity:
-            category = error.getCategoryAsString()
-            severity = error.getSeverityAsString()
-            message = error.getMessage()
-            print(f'libSBML {severity} ({category}): {message}')
-
-
-def globalize_parameters(sbml_model):
-    """Turn all local parameters into global parameters"""
-    for reaction in sbml_model.getListOfReactions():
-        law = reaction.getKineticLaw()
-        # copy first so we can delete in the following loop
-        local_parameters = [local_parameter for local_parameter
-                            in law.getListOfParameters()]
-        for lp in local_parameters:
-            # Create global parameter assuming names are globalized already
-            p = sbml_model.createParameter()
-            p.setId(lp.getId())
-            p.setName(lp.getName())
-            p.setConstant(lp.getConstant())
-            p.setValue(lp.getValue())
-            p.setUnits(lp.getUnits())
-
-            # removeParameter, not removeLocalParameter!
-            law.removeParameter(lp.getId())
-
-
 def main():
     sbml_file_template = 'CS_Signalling_ERBB_RAS_AKT.xml'
     sbml_file_new = '../PEtab/CS_Signalling_ERBB_RAS_AKT_petab.xml'
@@ -143,7 +96,7 @@ def main():
     sbml_document = sbml_reader.readSBML(sbml_file_template)
     sbml_model = sbml_document.getModel()
 
-    print_sbml_errors(sbml_document)
+    petab.log_sbml_errors(sbml_document)
 
     # fix units
     set_species_unit_to_nanomole(sbml_model)
@@ -151,7 +104,7 @@ def main():
     # Add observable and sigma
     add_observables(sbml_model)
 
-    globalize_parameters(sbml_model)
+    petab.globalize_parameters(sbml_model)
 
     # Write updated model
     sbml_writer = libsbml.SBMLWriter()
@@ -160,7 +113,7 @@ def main():
     # Load and check for errors
     sbml_reader = libsbml.SBMLReader()
     sbml_document = sbml_reader.readSBML(sbml_file_new)
-    check_sbml_consistency(sbml_document)
+    petab.is_sbml_consistent(sbml_document)
 
 
 if __name__ == '__main__':
