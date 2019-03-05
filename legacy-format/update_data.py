@@ -25,6 +25,10 @@ def update_condition_table(condition_file_template, condition_file, sbml_model):
 
     # Remove extra states. Only keep the ones marked constant in the model
     for parameter_id in template_df:
+        if parameter_id.endswith('_k_GeneSpecificScaling'):
+            del template_df[parameter_id]
+            continue
+
         if not parameter_id.startswith('SP_'):
             continue
 

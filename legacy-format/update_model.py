@@ -88,6 +88,12 @@ def add_observables(sbml_model):
     add_sigma(sbml_model, f'proliferation')
 
 
+def gene_specific_scaling_non_const(sbml_model):
+    """Make *_k_GeneSpecificScaling parameter non-const"""
+    for p in sbml_model.getListOfParameters():
+        if p.getId().endswith('_k_GeneSpecificScaling'):
+            p.setConstant(False)
+
 def main():
     sbml_file_template = 'CS_Signalling_ERBB_RAS_AKT.xml'
     sbml_file_new = '../PEtab/CS_Signalling_ERBB_RAS_AKT_petab.xml'
@@ -105,6 +111,8 @@ def main():
     add_observables(sbml_model)
 
     petab.globalize_parameters(sbml_model)
+
+    gene_specific_scaling_non_const(sbml_model)
 
     # Write updated model
     sbml_writer = libsbml.SBMLWriter()
