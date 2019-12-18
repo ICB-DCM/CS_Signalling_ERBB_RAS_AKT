@@ -1,0 +1,9 @@
+parameter_file: parameters_CCLE_petab.tsv
+petab_version: 0.0.0a17
+problems:
+- condition_files:
+  - conditions_petab.tsv
+  measurement_files:
+  - measurements_CCLE_petab.tsv
+  sbml_files:
+  - CS_Signalling_ERBB_RAS_AKT_CCLE_petab.xml

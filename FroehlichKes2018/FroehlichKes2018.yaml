@@ -1,0 +1,9 @@
+parameter_file: PEtab/parameters_petab.tsv
+petab_version: 0.0.0a17
+problems:
+- condition_files:
+  - PEtab/conditions_petab.tsv
+  measurement_files:
+  - PEtab/measurements_petab.tsv
+  sbml_files:
+  - PEtab/CS_Signalling_ERBB_RAS_AKT_petab.xml
