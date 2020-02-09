@@ -1,0 +1,13 @@
+format_version: 1
+parameter_file: parameters_petab.tsv
+problems:
+- condition_files:
+  - conditions_petab.tsv
+  measurement_files:
+  - measurements_petab.tsv
+  observable_files:
+  - observables_petab.tsv
+  sbml_files:
+  - CS_Signalling_ERBB_RAS_AKT_petab.xml
+  #visualization_files:
+  #- visualization.tsv
